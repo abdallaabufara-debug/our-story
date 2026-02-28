@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إلى أميرتي 🤍</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-pink: #ff758c;
+            --secondary-pink: #ff7eb3;
+            --soft-white: #fff5f7;
+            --text-color: #4a4a4a;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
+            margin: 0;
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            margin: 50px 0;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        h1 { color: var(--primary-pink); font-size: 2.5rem; margin-bottom: 10px; }
+
+        .timer-box {
+            background: var(--soft-white);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border: 2px dashed var(--primary-pink);
+        }
+        .timer-display { font-size: 1.4rem; font-weight: bold; color: #d63384; }
+        .days-count { font-size: 2.2rem; display: block; color: var(--primary-pink); margin-bottom: 5px;}
+
+        .music-section {
+            background: #222;
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        #lyrics-display {
+            height: 50px;
+            font-size: 1.3rem;
+            color: var(--secondary-pink);
+            margin-top: 15px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.5s ease;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: 0.3s;
+            border: 1px solid #eee;
+        }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
+
+        #message-area {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: #fff0f3;
+            border-radius: 10px;
+            border-right: 5px solid var(--primary-pink);
+            text-align: right;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .btn {
+            background: var(--primary-pink);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            margin: 10px;
+            transition: 0.3s;
+        }
+        .btn:hover { background: #e0526b; transform: scale(1.05); }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .heart { position: fixed; font-size: 25px; z-index: 999; pointer-events: none; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>إلى شريكة العُمر 🤍</h1>
+        
+        <div class="timer-box">
+            <span class="days-count" id="days-val">تحميل الأيام...</span>
+            <div id="timer" class="timer-display">تحميل الثواني...</div>
+        </div>
+
+        <div class="music-section">
+            <button class="btn" id="play-btn" onclick="toggleMusic()">تشغيل أغنيتنا: I Wanna Be Yours 🎵</button>
+            <div id="lyrics-display">اضغطي للبدء.. ✨</div>
+            <audio id="love-song" src="music.mp3"></audio> 
+        </div>
+
+        <div class="grid">
+            <div class="card" onclick="showMessage('اعتذار')"><span>✉️</span><h3>كلمة لقلبك</h3></div>
+            <div class="card" onclick="showMessage('وعد')"><span>🤝</span><h3>وعد الـ 8 سنين</h3></div>
+            <div class="card" onclick="createHeartRain()"><span>❤️</span><h3>مطر القلوب</h3></div>
+        </div>
+
+        <div id="message-area">
+            <h3 id="msg-title" style="color:var(--primary-pink)"></h3>
+            <p id="msg-content" style="line-height: 1.8; font-size: 1.1rem;"></p>
+        </div>
+
+        <footer style="margin-top: 40px; font-size: 0.8rem; opacity: 0.6;">صُنعت بكل حب بواسطة عبد | 8 سنوات 🤍</footer>
+    </div>
+
+    <script>
+        // 1. عداد الوقت (8 سنوات)
+        // حدد تاريخ بدايتكم هنا: (السنة، الشهر -1، اليوم)
+        const startDate = new Date(2018, 2, 1); 
+
+        function updateTimer() {
+            const now = new Date();
+            const diff = now - startDate;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((diff / 1000 / 60) % 60);
+            const seconds = Math.floor((diff / 1000) % 60);
+            document.getElementById('days-val').innerText = days + " يوم";
+            document.getElementById('timer').innerText = `${hours} ساعة، ${minutes} دقيقة، ${seconds} ثانية حب`;
+        }
+        setInterval(updateTimer, 1000);
+        updateTimer();
+
+        // 2. نظام الترجمة
+        const audio = document.getElementById('love-song');
+        const lyricsDisplay = document.getElementById('lyrics-display');
+        
+        const lyrics = [
+            { time: 18, text: "أريد أن أكون مكنستك الكهربائية" },
+            { time: 22, text: "أستنشق غبارك.." },
+            { time: 25, text: "أريد أن أكون سيارة فورد كورتينا الخاصة بك" },
+            { time: 29, text: "أنا لن أصاب بالصدأ أبداً" },
+            { time: 32, text: "أعلم أنك تحبين قهوتك ساخنة" },
+            { time: 36, text: "دعيني أكون وعاء القهوة الخاص بك" },
+            { time: 40, text: "أنتِ من يتخذ القرارات يا عزيزتي" },
+            { time: 42, text: "أريد فقط أن أكون ملكاً لكِ" },
+            { time: 46, text: "أسرار أريد أن أحتفظ بها في قلبي" },
+            { time: 49, text: "أحبكِ دائماً أكثر مما اعتقدتِ" },
+            { time: 53, text: "أريد فقط أن أكون ملكاً لكِ" },
+            { time: 57, text: "أريد فقط أن أكون ملكاً لكِ" },
+            { time: 58, text: "أريد فقط أن أكون ملكاً لكِ" },
+            { time: 62, text: "أريد فقط أن أكون ملكاً لكِ" },
+            { time: 64, text: "بحبك بحبك بحبك يا ميار.." }
+        ];
+
+        function toggleMusic() {
+            if (audio.paused) {
+                audio.play();
+                document.getElementById('play-btn').innerText = "إيقاف الموسيقى ⏸️";
+                syncLyrics();
+            } else {
+                audio.pause();
+                document.getElementById('play-btn').innerText = "تشغيل الأغنية 🎵";
+            }
+        }
+
+        function syncLyrics() {
+            audio.addEventListener('timeupdate', () => {
+                const currentTime = audio.currentTime;
+                const currentLine = lyrics.find((line, index) => {
+                    const nextLine = lyrics[index + 1];
+                    return currentTime >= line.time && (!nextLine || currentTime < nextLine.time);
+                });
+                if (currentLine) {
+                    lyricsDisplay.innerText = currentLine.text;
+                }
+            });
+        }
+
+        // 3. الرسائل
+        function showMessage(type) {
+            const area = document.getElementById('message-area');
+            area.style.display = 'block';
+            if(type === 'اعتذار') {
+                document.getElementById('msg-title').innerText = "اعتذار من القلب ✉️";
+                document.getElementById('msg-content').innerText = "بعد 8 سنوات، عرفت إنك مش بس حبيبتي، إنتي أماني. أنا أسف لأي لحظة حسستك فيها إنك ثقيلة أو ما سمعتك فيها بقلبي. بوعدك أكون الحضن اللي بيهديكي مش اللي بيضغط عليكي.";
+            } else {
+                document.getElementById('msg-title').innerText = "وعد الوفاء 🤝";
+                document.getElementById('msg-content').innerText = "وعدي إلك إني ما أسمح لهالسنوات تضيع بزهق أو تعب. رح أجدد حبي إلك كل يوم، وأهتم بكل تفصيل صغير بيسعدك، وأكون دايماً المستمع الأول والأخير.";
+            }
+        }
+
+        function createHeartRain() {
+            for(let i=0; i<30; i++) {
+                const heart = document.createElement('div');
+                heart.classList.add('heart');
+                heart.innerText = '❤️';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.top = '-50px';
+                heart.style.position = 'fixed';
+                heart.style.transition = `top ${Math.random() * 2 + 2}s linear`;
+                document.body.appendChild(heart);
+                setTimeout(() => { heart.style.top = '100vh'; }, 100);
+                setTimeout(() => { heart.remove(); }, 4000);
+            }
+        }
+    </script>
+</body>
+</html>
